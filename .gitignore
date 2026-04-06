@@ -1,0 +1,21 @@
+# Python virtual environment
+venv/
+.venv/
+
+# IDE files
+.idea/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Env files
+.env
+
+# 2. Remove from tracking
+git rm -r --cached venv
+git rm -r --cached .idea
+
+# 3. Commit
+git add .gitignore
+git commit -m "Remove venv and IDE files, add gitignore"
