@@ -4,6 +4,20 @@ from datetime import date
 import requests
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
+from fastapi.responses import HTMLResponse
+import os
+import logging
+
+log_dir = "/opt/apps/patient-appointment/logs"
+os.makedirs(log_dir, exist_ok=True)
+
+logging.basicConfig(
+    filename=os.path.join(log_dir, "appointment-agent.log"),
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
+
+logging.info("Appointment Agent Orchestrator API service started.")
 
 app = FastAPI(title="Agent Orchestrator")
 
@@ -35,6 +49,17 @@ class ChatRequest(BaseModel):
     slotId: Optional[int] = None
     slotStartTime: Optional[str] = None
     slotEndTime: Optional[str] = None
+
+@app.get("/test-appointment_agent", response_class=HTMLResponse)
+def home():
+    return """
+    <html>
+    <body>
+        <h2>Title: Appointment Agent Orchestrator</h2>
+        <h2>Appointment Agent Orchestrator API Service response is good.</h2>
+    </body>
+    </html>
+    """
 
 @app.post("/chat")
 def chat(req: ChatRequest):

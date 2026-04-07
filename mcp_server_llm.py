@@ -19,31 +19,37 @@ app.add_middleware(
 )
 
 # Base URLs of microservices
-SPECIALIZATION_SERVICE = "http://localhost:8094"  # Specializations
-DOCTOR_SERVICE = "http://localhost:8094"          # Doctors
-SLOT_SERVICE = "http://localhost:8094"            # Slots
-APPOINTMENT_SERVICE = "http://localhost:8094"     # Appointments
+AI_AGENT_SERVICE = "http://localhost:8094" 
 
 @app.get("/specializations")
-def get_specializations():
+def get_specializations(request: Request):
+    auth_header = request.headers.get('Authorization')
+    headers = {'Authorization': auth_header} if auth_header else {}
     try:
-        response = requests.get(f"{SPECIALIZATION_SERVICE}/api/specializations")
+        response = requests.get(f"{AI_AGENT_SERVICE}/api/specializations", headers=headers)
+        print("response.json() specializations", response.json())
         return response.json()
     except Exception as e:
         return {"error": f"Failed to fetch specializations: {str(e)}"}
 
 @app.get("/doctors/by-specialization/{spec_id}")
-def get_doctors(spec_id: int):
+def get_doctors(spec_id: int, request: Request):
+    auth_header = request.headers.get('Authorization')
+    headers = {'Authorization': auth_header} if auth_header else {}
     try:
-        response = requests.get(f"{DOCTOR_SERVICE}/api/doctors/by-specialization/{spec_id}")
+        response = requests.get(f"{AI_AGENT_SERVICE}/api/doctors/by-specialization/{spec_id}", headers=headers)
+        print("response.json() doctors", response.json())
         return response.json()
     except Exception as e:
         return {"error": f"Failed to fetch doctors: {str(e)}"}
 
 @app.get("/slots")
-def get_slots(doctorId: str, date: str):
+def get_slots(doctorId: str, date: str, request: Request):
+    auth_header = request.headers.get('Authorization')
+    headers = {'Authorization': auth_header} if auth_header else {}
     try:
-        response = requests.get(f"{SLOT_SERVICE}/api/slots?doctorId={doctorId}&date={date}")
+        response = requests.get(f"{AI_AGENT_SERVICE}/api/slots?doctorId={doctorId}&date={date}", headers=headers)
+        print("response.json() slots", response.json())
         return response.json()
     except Exception as e:
         return {"error": f"Failed to fetch slots: {str(e)}"}
@@ -51,8 +57,11 @@ def get_slots(doctorId: str, date: str):
 @app.post("/appointments")
 async def book_appointment(request: Request):
     payload = await request.json()
+    auth_header = request.headers.get('Authorization')
+    headers = {'Authorization': auth_header} if auth_header else {}
     try:
-        response = requests.post(f"{APPOINTMENT_SERVICE}/api/appointments", json=payload)
+        response = requests.post(f"{AI_AGENT_SERVICE}/api/appointments", json=payload, headers=headers)
+        print("response.json() appointments", response.json())
         return response.json()
     except Exception as e:
         return {"error": f"Failed to book appointment: {str(e)}"}
